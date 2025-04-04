@@ -150,6 +150,6 @@ public class BookingPrompter {
       input = scanner.nextLine();
     }
 
-    return Integer.parseInt(input);
+    return Integer.parseInt(input) - 1; // Offset to zero-based index
   }
 }

@@ -28,12 +28,12 @@ class BookingPrompterTest {
   }
 
   @Test
-  void testPrompt_validInput() {
+  void testPrompt_validInputOffset() {
     when(optionCatalogueMock.getOptions()).thenReturn(createMockOptions());
     when(scannerMock.nextLine()).thenReturn("1"); // A valid option
 
     int selectedOption = bookingPrompter.prompt();
-    assertEquals(1, selectedOption);
+    assertEquals(0, selectedOption);
   }
 
   @Test
@@ -45,7 +45,7 @@ class BookingPrompterTest {
         .thenReturn("2"); // Valid input second
 
     int selectedOption = bookingPrompter.prompt();
-    assertEquals(2, selectedOption);
+    assertEquals(1, selectedOption);
 
     // Verify that the user was prompted thrice
     verify(scannerMock, times(3)).nextLine();
