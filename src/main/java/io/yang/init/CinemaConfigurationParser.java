@@ -1,5 +1,7 @@
 package io.yang.init;
 
+import org.apache.commons.lang3.math.NumberUtils;
+
 /**
  * A utility class for parsing cinema configuration inputs into {@link CinemaConfiguration} objects.
  * This class provides methods to validate and parse input data such as movie titles, number of
@@ -34,6 +36,10 @@ public class CinemaConfigurationParser {
    * @throws IllegalArgumentException if the number of rows is less than 1 or greater than 26.
    */
   private static int parseRows(String input) {
+    if (!NumberUtils.isCreatable(input)) {
+      throw new IllegalArgumentException("Number of rows must be numeric.\n");
+    }
+
     int rows = Integer.parseInt(input.trim());
     if (rows < 1) {
       throw new IllegalArgumentException("Number of rows cannot be less than 1.\n");
@@ -53,6 +59,10 @@ public class CinemaConfigurationParser {
    *     50.
    */
   private static int parseSeatsPerRow(String input) {
+    if (!NumberUtils.isCreatable(input)) {
+      throw new IllegalArgumentException("Number of seats per rows must be numeric.\n");
+    }
+
     int seatsPerRow = Integer.parseInt(input.trim());
     if (seatsPerRow < 1) {
       throw new IllegalArgumentException("Number of seats per row cannot be less than 1.\n");

@@ -47,10 +47,15 @@ class CinemaConfigurationParserTest {
             "Input must contain exactly 3 parts: movie title, rows, and seats per row.\n"),
         Arguments.of(Named.of("Blank movie title", " 15 25"), "Movie title cannot be empty.\n"),
         Arguments.of(
-            Named.of("Rows less than 1", "Inception 0 25"),
+            Named.of("Rows not numeric", "Inception a 15"), "Number of rows must be numeric.\n"),
+        Arguments.of(
+            Named.of("Rows less than 1", "Inception -1 25"),
             "Number of rows cannot be less than 1.\n"),
         Arguments.of(
             Named.of("Rows exceeding 26", "Inception 27 25"), "Number of rows cannot exceed 26.\n"),
+        Arguments.of(
+            Named.of("Seats per row not numeric", "Inception 13 a"),
+            "Number of seats per rows must be numeric.\n"),
         Arguments.of(
             Named.of("Seats per row less than 1", "Inception 15 0"),
             "Number of seats per row cannot be less than 1.\n"),
