@@ -1,4 +1,4 @@
-package io.yang.booking;
+package io.yang.booking.prompter;
 
 import io.yang.booking.option.Option;
 import io.yang.booking.option.OptionCatalogue;
@@ -39,7 +39,7 @@ import static org.apache.commons.lang3.StringUtils.isNumeric;
  * @see OptionCatalogue
  * @see Cinema
  */
-public class BookingPrompter {
+public class MenuPrompter {
 
   private static final String WELCOME_MESSAGE = "Welcome to GIC Cinemas";
   private static final String PROMPT_MESSAGE = "Please enter your selection:";
@@ -55,7 +55,7 @@ public class BookingPrompter {
    * @param optionCatalogue the {@link OptionCatalogue} providing dynamic menu options
    * @see Cinema
    */
-  public BookingPrompter(Scanner scanner, OptionCatalogue optionCatalogue) {
+  public MenuPrompter(Scanner scanner, OptionCatalogue optionCatalogue) {
     this.scanner = scanner;
     this.optionCatalogue = optionCatalogue;
   }

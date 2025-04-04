@@ -1,8 +1,9 @@
-package io.yang.booking;
+package io.yang.prompter;
 
 import io.yang.booking.option.BookOption;
 import io.yang.booking.option.Option;
 import io.yang.booking.option.OptionCatalogue;
+import io.yang.booking.prompter.MenuPrompter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -14,17 +15,17 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class BookingPrompterTest {
+class MenuPrompterTest {
 
   private Scanner scannerMock;
   private OptionCatalogue optionCatalogueMock;
-  private BookingPrompter bookingPrompter;
+  private MenuPrompter bookingPrompter;
 
   @BeforeEach
   void setUp() {
     scannerMock = mock(Scanner.class);
     optionCatalogueMock = mock(OptionCatalogue.class);
-    bookingPrompter = new BookingPrompter(scannerMock, optionCatalogueMock);
+    bookingPrompter = new MenuPrompter(scannerMock, optionCatalogueMock);
   }
 
   @Test
