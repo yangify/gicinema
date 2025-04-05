@@ -1,9 +1,8 @@
 package io.yang.booking;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
+import io.yang.booking.option.ExitOption;
 import io.yang.booking.option.Option;
 
 import java.io.ByteArrayOutputStream;
@@ -33,16 +32,11 @@ class BookingSessionTest {
   @Test
   void testRunStopsWhenCommandReturnsFalse() {
     // Given
-    // Create an option that, when executed, returns false to end the session
-    Option mockOption = mock(Option.class);
-    when(mockOption.getMessage()).thenReturn("Exit");
-    when(mockOption.getAction()).thenReturn(() -> false);
-    Option[] options = {mockOption};
-    // Pass in the only option valid option to exit
+    Option[] options = {new ExitOption()};
     Scanner scanner = new Scanner("1\n");
 
     // When
-    new BookingSession(options).run(scanner);
+    new BookingSession(options, scanner).run();
     String output = outContent.toString();
 
     // If the session loop ends without issues, the test passes

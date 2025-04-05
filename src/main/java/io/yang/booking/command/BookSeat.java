@@ -123,22 +123,21 @@ public class BookSeat implements Action {
   private String promptWithErrorMessage(String message) {
     System.out.println();
     System.out.println(message);
-    return prompt();
+    return promptForSeats();
   }
 
-  private String prompt() {
+  private String promptForSeats() {
     System.out.println();
     System.out.println("Enter number of seats to book, or enter blank to go back to main menu:");
     return scanner.nextLine();
   }
 
   @Override
-  public boolean execute() {
+  public void execute() {
+    String input = promptForSeats();
+    if (isReturnToMainMenu(input)) return;
+
     String bookingId = BookingIdGenerator.nextId();
-
-    String input = prompt();
-    if (isReturnToMainMenu(input)) return true;
-
     int numberOfSeats = solicitForNumberOfSeats(input);
     bookSeats(bookingId, numberOfSeats);
     displayBookingSummary(bookingId, numberOfSeats);
@@ -152,6 +151,5 @@ public class BookSeat implements Action {
     }
 
     displayBookingConfirmation(bookingId);
-    return true;
   }
 }

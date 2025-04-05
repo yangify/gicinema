@@ -18,7 +18,7 @@ public class Menu {
     this.options = options;
   }
 
-  private boolean isValidInput(String input) {
+  private boolean isValidSelection(String input) {
     return isNumeric(input)
         && Integer.parseInt(input) > 0
         && Integer.parseInt(input) <= options.length;
@@ -40,9 +40,9 @@ public class Menu {
     System.out.println("Thank you for using GIC Cinemas system, Bye!");
   }
 
-  public int getInput(Scanner scanner) {
+  public int promptForSelection(Scanner scanner) {
     String input = scanner.nextLine();
-    while (!isValidInput(input)) {
+    while (!isValidSelection(input)) {
       System.out.println("Invalid option. Please try again.");
       input = scanner.nextLine();
     }

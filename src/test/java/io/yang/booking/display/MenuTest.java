@@ -81,7 +81,7 @@ class MenuTest {
     Scanner scanner = new Scanner(System.in);
 
     // When
-    int selectionIndex = menu.getInput(scanner);
+    int selectionIndex = menu.promptForSelection(scanner);
 
     // Then
     // "2" means index 1 as the method subtracts 1 internally
@@ -103,7 +103,7 @@ class MenuTest {
     Scanner scanner = new Scanner(System.in);
 
     // When
-    int selectionIndex = menu.getInput(scanner);
+    int selectionIndex = menu.promptForSelection(scanner);
 
     // Then
     assertEquals(1, selectionIndex);

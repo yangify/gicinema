@@ -21,7 +21,7 @@ public class Main {
 
     Option[] options =
         new Option[] {new BookOption(cinema, scanner), new CheckOption(cinema), new ExitOption()};
-    new BookingSession(options).run(scanner);
+    new BookingSession(options, scanner).run();
   }
 
   public static void main(String[] args) {

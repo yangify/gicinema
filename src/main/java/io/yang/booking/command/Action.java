@@ -1,5 +1,10 @@
 package io.yang.booking.command;
 
 public interface Action {
-  boolean execute();
+
+  default boolean isExit() {
+    return false;
+  }
+
+  void execute();
 }

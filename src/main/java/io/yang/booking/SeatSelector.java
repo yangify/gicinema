@@ -9,10 +9,32 @@ public class SeatSelector {
 
   private SeatSelector() {}
 
-  public static List<Seat> selectSeats(int numberOfSeats, Seat[][] seats, Position startPosition) {
-    // fill seat from the right from startPosition
-    // fill seats as per normal
-    return List.of();
+  // TODO: solve this bug
+  public static Seat[] selectSeats(int numberOfSeats, Seat[][] seats, Position startPosition) {
+    List<Seat> selectedSeats = new ArrayList<>();
+
+    int rowNum = startPosition.rowNum;
+    int colNum = startPosition.colNum;
+    Seat[] row = seats[rowNum];
+
+    while (numberOfSeats > 0 && colNum < row.length) {
+      if (row[colNum].isAvailable()) {
+        selectedSeats.add(row[colNum]);
+        numberOfSeats--;
+      }
+      colNum++;
+    }
+
+    while (numberOfSeats > 0) {
+      rowNum++;
+      if (rowNum >= seats.length) rowNum = 0;
+      List<Seat> availableRowSeats = selectSeats(numberOfSeats, seats[rowNum]);
+      availableRowSeats.subList(0, Math.min(numberOfSeats, availableRowSeats.size()));
+      selectedSeats.addAll(availableRowSeats);
+      numberOfSeats -= availableRowSeats.size();
+    }
+
+    return selectedSeats.toArray(new Seat[0]);
   }
 
   public static List<Seat> selectSeats(int numberOfSeats, Seat[] row) {

@@ -12,33 +12,41 @@ public class BookingSession {
   /** Indicates whether the session is still running. */
   private boolean isOpen;
 
-  /** Menu of available options for the user. */
+  /**
+   * The menu that presents the user with all available options and actions they can take during the
+   * booking session.
+   */
   private final Menu menu;
+
+  /** The Scanner instance used to capture user input during the running session. */
+  private final Scanner scanner;
 
   /**
    * Creates a new booking session with the provided options. By default, a newly created session is
    * open.
    *
    * @param options an array of options used to build the session menu
+   * @param scanner the Scanner instance to read user input
    */
-  public BookingSession(Option[] options) {
+  public BookingSession(Option[] options, Scanner scanner) {
     this.isOpen = true;
     this.menu = new Menu(options);
+    this.scanner = scanner;
   }
 
   /**
    * Runs the main loop of the booking session. It displays the available options, gathers user
    * input, and executes the corresponding action. The session continues until it is closed through
    * an executed action.
-   *
-   * @param scanner the Scanner instance to read user input
    */
-  public void run(Scanner scanner) {
+  public void run() {
     while (isOpen) {
       menu.displayOptions();
-      int selection = menu.getInput(scanner);
+      int selection = menu.promptForSelection(scanner);
       Action command = menu.getAction(selection);
-      isOpen = command.execute();
+
+      command.execute();
+      isOpen = !command.isExit();
     }
     menu.displayExitMessage();
   }
