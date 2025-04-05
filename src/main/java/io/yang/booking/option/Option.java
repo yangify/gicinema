@@ -1,22 +1,22 @@
 package io.yang.booking.option;
 
-import io.yang.booking.command.Command;
+import io.yang.booking.command.Action;
 
 public abstract class Option {
 
   private final String message;
-  private final Command command;
+  private final Action action;
 
-  Option(String message, Command command) {
+  Option(String message, Action action) {
     this.message = message;
-    this.command = command;
+    this.action = action;
   }
 
   public String getMessage() {
     return message;
   }
 
-  public Command getCommand() {
-    return command;
+  public Action getAction() {
+    return action;
   }
 }

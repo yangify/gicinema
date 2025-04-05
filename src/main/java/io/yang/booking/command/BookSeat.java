@@ -1,10 +1,11 @@
 package io.yang.booking.command;
 
-public class BookSeatCommand implements Command {
+public class BookSeat implements Action {
 
   @Override
-  public void execute() {
+  public boolean execute() {
     System.out.println("Booking functionality executed.");
     // TODO: Add booking logic here
+    return true;
   }
 }

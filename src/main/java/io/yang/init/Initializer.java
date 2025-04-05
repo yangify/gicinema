@@ -1,5 +1,6 @@
 package io.yang.init;
 
+
 import java.util.Scanner;
 
 /**
@@ -31,17 +32,14 @@ import java.util.Scanner;
  */
 public class Initializer {
 
-  /** Message prompt displayed to the user for input. */
   private static final String PROMPT =
       "Please define movie title and seating map in [Title] [Row] [SeatsPerRow] format:";
 
-  /** Private constructor to prevent instantiation of this utility class. */
   private Initializer() {}
 
   /**
    * Displays a prompt to the user and reads a single line of input from the console.
    *
-   * @param scanner a {@link Scanner} instance used to read input from the console
    * @return The input string entered by the user
    */
   private static String prompt(Scanner scanner) {
@@ -55,18 +53,17 @@ public class Initializer {
    * CinemaConfigurationParser#parse(String)} method and handles any {@link
    * IllegalArgumentException} thrown during parsing.
    *
-   * @param scanner a {@link Scanner} instance used to read input from the console
    * @return An initialized {@link CinemaConfiguration} object based on valid user input
    */
   public static CinemaConfiguration init(Scanner scanner) {
     CinemaConfiguration cinemaConfiguration = null;
     while (cinemaConfiguration == null) {
+
       String input = prompt(scanner);
       try {
-        // Parse input to create CinemaConfiguration
         cinemaConfiguration = CinemaConfigurationParser.parse(input);
+
       } catch (IllegalArgumentException e) {
-        // Display error message if parsing fails
         System.out.println(e.getMessage());
       }
     }

@@ -1,14 +1,14 @@
 package io.yang.booking.option;
 
 import io.yang.cinema.Cinema;
-import io.yang.booking.command.BookSeatCommand;
+import io.yang.booking.command.BookSeat;
 
 public class BookOption extends Option {
 
   private final Cinema cinema;
 
-  protected BookOption(Cinema cinema) {
-    super("Book tickets for %s (%s seats available)", new BookSeatCommand());
+  public BookOption(Cinema cinema) {
+    super("Book tickets for %s (%s seats available)", new BookSeat());
     this.cinema = cinema;
   }
 

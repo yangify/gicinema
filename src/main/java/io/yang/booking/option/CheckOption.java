@@ -1,10 +1,14 @@
 package io.yang.booking.option;
 
-import io.yang.booking.command.CheckBookingCommand;
+import io.yang.booking.command.CheckBooking;
+import io.yang.cinema.Cinema;
 
 public class CheckOption extends Option {
 
-  CheckOption() {
-    super("Check bookings", new CheckBookingCommand());
+  private final Cinema cinema;
+
+  public CheckOption(Cinema cinema) {
+    super("Check bookings", new CheckBooking());
+    this.cinema = cinema;
   }
 }
