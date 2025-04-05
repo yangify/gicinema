@@ -4,6 +4,8 @@ import io.yang.cinema.Cinema;
 
 import java.util.Scanner;
 
+import static org.apache.commons.lang3.StringUtils.isNumeric;
+
 public class BookSeat implements Action {
 
   private final Cinema cinema;
@@ -14,8 +16,29 @@ public class BookSeat implements Action {
     this.scanner = scanner;
   }
 
-  private boolean isReturnToMainMenu(String response) {
-    return response.trim().isEmpty();
+  private boolean isValidInput(String input) {
+    return isNumeric(input.trim()) && Integer.parseInt(input) > 0;
+  }
+
+  private int parse(String input) {
+    while (!isValidInput(input)) {
+      System.out.println("Number of tickets must be a number greater than 0");
+      input = prompt();
+    }
+    return Integer.parseInt(input);
+  }
+
+  private boolean bookSeats(String input) {
+    int numberOfSeats = parse(input);
+    return bookSeats(numberOfSeats);
+  }
+
+  private boolean bookSeats(int numberOfSeats) {
+    return true;
+  }
+
+  private boolean isReturnToMainMenu(String input) {
+    return input.trim().isEmpty();
   }
 
   private String prompt() {
@@ -26,7 +49,7 @@ public class BookSeat implements Action {
 
   @Override
   public boolean execute() {
-    String response = prompt();
-    return isReturnToMainMenu(response);
+    String input = prompt();
+    return isReturnToMainMenu(input) || bookSeats(input);
   }
 }
