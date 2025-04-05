@@ -51,6 +51,16 @@ public class Seat {
   }
 
   /**
+   * Releases the reservation for the seat. This sets the seat's state to available and clears the
+   * associated booking ID. Once this method is called, {@code isAvailable()} will return {@code
+   * true}.
+   */
+  public void release() {
+    this.reserved = false;
+    this.bookingId = null;
+  }
+
+  /**
    * Retrieves the booking ID associated with the seat.
    *
    * @return the booking ID of the reserved seat, or {@code null} if the seat is not reserved.
