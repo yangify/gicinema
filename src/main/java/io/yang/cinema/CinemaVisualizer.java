@@ -76,12 +76,10 @@ public class CinemaVisualizer {
 
     Seat[][] allSeats = cinema.getSeats();
     int totalRows = allSeats.length;
-    // Render rows from top to bottom
     for (int row = 0; row < totalRows; row++) {
-      // Compute row label (A, B, C, etc.) in reverse order if desired
       char rowChar = (char) ('A' + totalRows - row - 1);
-      System.out.println(
-          padRight(rowChar, ROW_MARKER_WIDTH) + buildSeatLine(allSeats[row], bookingId));
+      String line = padRight(rowChar, ROW_MARKER_WIDTH) + buildSeatLine(allSeats[row], bookingId);
+      System.out.println(line);
     }
     System.out.println(buildColumnMarkerLine(cinema));
   }
