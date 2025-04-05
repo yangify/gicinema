@@ -19,7 +19,8 @@ public class Main {
     CinemaConfiguration config = Initializer.init(scanner);
     Cinema cinema = new Cinema(config);
 
-    Option[] options = new Option[]{new BookOption(cinema), new CheckOption(cinema), new ExitOption()};
+    Option[] options =
+        new Option[] {new BookOption(cinema, scanner), new CheckOption(cinema), new ExitOption()};
     new BookingSession(options).run(scanner);
   }
 
