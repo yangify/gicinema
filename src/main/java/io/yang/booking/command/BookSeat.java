@@ -16,20 +16,43 @@ public class BookSeat implements Action {
     this.scanner = scanner;
   }
 
-  private boolean isValidInput(String input) {
+  private boolean hasEnoughSeats(int numberOfSeats) {
+    return numberOfSeats <= cinema.getAvailableSeatsCount();
+  }
+
+  private boolean isValidNumber(String input) {
     return isNumeric(input.trim()) && Integer.parseInt(input) > 0;
   }
 
   private int parse(String input) {
-    while (!isValidInput(input)) {
-      System.out.println("Number of tickets must be a number greater than 0");
-      input = prompt();
+    if (!isValidNumber(input)) {
+      String message = "Number of tickets must be a number greater than 0";
+      throw new IllegalArgumentException(message);
     }
-    return Integer.parseInt(input);
+
+    int numberOfSeats = Integer.parseInt(input);
+    if (!hasEnoughSeats(numberOfSeats)) {
+      int availableSeats = cinema.getAvailableSeatsCount();
+      String message = "Sorry, there are only " + availableSeats + " seats available";
+      throw new IllegalArgumentException(message);
+    }
+
+    return numberOfSeats;
+  }
+
+  private int getNumberOfSeats(String input) {
+    while (true) {
+      try {
+        return parse(input);
+
+      } catch (IllegalArgumentException e) {
+        input = promptWithErrorMessage(e.getMessage());
+      }
+    }
   }
 
   private boolean bookSeats(String input) {
-    int numberOfSeats = parse(input);
+    int numberOfSeats = getNumberOfSeats(input);
     return bookSeats(numberOfSeats);
   }
 
@@ -39,6 +62,12 @@ public class BookSeat implements Action {
 
   private boolean isReturnToMainMenu(String input) {
     return input.trim().isEmpty();
+  }
+
+  private String promptWithErrorMessage(String message) {
+    System.out.println();
+    System.out.println(message);
+    return prompt();
   }
 
   private String prompt() {

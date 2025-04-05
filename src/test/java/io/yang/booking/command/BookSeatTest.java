@@ -20,13 +20,16 @@ import static org.mockito.Mockito.when;
 
 class BookSeatTest {
 
-  private static Scanner scanner;
+  private Scanner scanner;
+  private Cinema cinema;
+
   private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
   private final PrintStream originalOut = System.out;
 
   @BeforeEach
   void setUp() {
     scanner = mock(Scanner.class);
+    cinema = mock(Cinema.class);
     System.setOut(new PrintStream(outContent));
   }
 
@@ -40,7 +43,7 @@ class BookSeatTest {
   void testExecuteReturnsBackToMainMenuWhenBlankInput() {
     // Given
     when(scanner.nextLine()).thenReturn("\n");
-    BookSeat bookSeat = new BookSeat(mock(Cinema.class), scanner);
+    BookSeat bookSeat = new BookSeat(cinema, scanner);
 
     // When
     boolean result = bookSeat.execute();
@@ -55,7 +58,9 @@ class BookSeatTest {
             Named.of("Text input", "text"), "Number of tickets must be a number greater than 0"),
         Arguments.of(
             Named.of("Negative number", "-1"), "Number of tickets must be a number greater than 0"),
-        Arguments.of(Named.of("Zero", "0"), "Number of tickets must be a number greater than 0"));
+        Arguments.of(Named.of("Zero", "0"), "Number of tickets must be a number greater than 0"),
+        Arguments.of(
+            Named.of("Not enough seats", "101"), "Sorry, there are only 10 seats available"));
   }
 
   @ParameterizedTest
@@ -63,7 +68,8 @@ class BookSeatTest {
   void testKeepsPromptingUntilValidResponse(String invalidInput, String expectedMessage) {
     // Given
     when(scanner.nextLine()).thenReturn(invalidInput).thenReturn("1");
-    BookSeat bookSeat = new BookSeat(mock(Cinema.class), scanner);
+    when(cinema.getAvailableSeatsCount()).thenReturn(10);
+    BookSeat bookSeat = new BookSeat(cinema, scanner);
 
     // When
     bookSeat.execute();
