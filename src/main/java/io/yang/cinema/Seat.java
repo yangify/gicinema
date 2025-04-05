@@ -7,6 +7,13 @@ package io.yang.cinema;
  * methods to check whether the seat is available, reserved, or to mark it as reserved.
  */
 public class Seat {
+  
+  
+  /**
+   * The booking ID associated with the seat. This field is assigned when the seat is reserved and is
+   * {@code null} if the seat is not reserved.
+   */
+  private String bookingId;
 
   /**
    * Indicates whether the seat is reserved. This field is {@code true} if the seat is reserved;
@@ -33,10 +40,22 @@ public class Seat {
   }
 
   /**
-   * Marks the seat as reserved. Once this method is called, {@code isAvailable()} will return
-   * {@code false}.
+   * Marks the seat as reserved with the specified booking ID. Once this method is called, 
+   * {@code isAvailable()} will return {@code false}.
+   *
+   * @param bookingId the unique identifier for the booking associated with this seat
    */
-  public void reserve() {
-    reserved = true;
+  public void reserve(String bookingId) {
+    this.reserved = true;
+    this.bookingId = bookingId;
+  }
+
+  /**
+   * Retrieves the booking ID associated with the seat.
+   *
+   * @return the booking ID of the reserved seat, or {@code null} if the seat is not reserved.
+   */
+  public String getBookingId() {
+    return bookingId;
   }
 }

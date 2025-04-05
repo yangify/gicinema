@@ -64,8 +64,8 @@ class CinemaTest {
     Seat[][] seats = cinema.getSeats();
 
     // Manually occupy some seats for testing
-    seats[0][0].reserve(); // Reserve seat at (0,0)
-    seats[1][2].reserve(); // Reserve seat at (1,2)
+    seats[0][0].reserve("1"); // Reserve seat at (0,0)
+    seats[1][2].reserve("2"); // Reserve seat at (1,2)
 
     // Verify updated count
     assertEquals(4, cinema.getAvailableSeatsCount());
