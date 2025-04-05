@@ -1,7 +1,14 @@
 package io.yang.booking.command;
 
+import io.yang.booking.SeatSelector;
+import io.yang.booking.SeatSelector.Position;
+import io.yang.booking.generator.BookingIdGenerator;
 import io.yang.cinema.Cinema;
+import io.yang.cinema.CinemaVisualizer;
+import io.yang.cinema.Seat;
 
+import java.util.Arrays;
+import java.util.Optional;
 import java.util.Scanner;
 
 import static org.apache.commons.lang3.StringUtils.isNumeric;
@@ -14,6 +21,10 @@ public class BookSeat implements Action {
   public BookSeat(Cinema cinema, Scanner scanner) {
     this.cinema = cinema;
     this.scanner = scanner;
+  }
+
+  private Position convertToPosition(String input) {
+    return new Position(7, 6);
   }
 
   private boolean hasEnoughSeats(int numberOfSeats) {
@@ -40,7 +51,42 @@ public class BookSeat implements Action {
     return numberOfSeats;
   }
 
-  private int getNumberOfSeats(String input) {
+  private void displayBookingConfirmation(String bookingId) {
+    System.out.println();
+    System.out.printf("Booking id: %s confirmed.", bookingId);
+    System.out.println();
+  }
+
+  private void displayBookingSummary(String bookingId, int numberOfSeats) {
+    System.out.println();
+    System.out.println(
+        "Successfully reserved " + numberOfSeats + " " + cinema.getMovieTitle() + " tickets.");
+    System.out.println("Booking id: " + bookingId);
+    System.out.println("Selected seats:");
+    System.out.println();
+
+    CinemaVisualizer.visualize(cinema, bookingId);
+  }
+
+  private Optional<Position> solicitForAcceptanceOrNewPosition() {
+    while (true) {
+      System.out.println();
+      System.out.println("Enter blank to accept seat selection, or enter new seating position:");
+      String input = scanner.nextLine();
+
+      boolean isAcceptance = input.trim().isEmpty();
+      if (isAcceptance) return Optional.empty();
+
+      try {
+        return Optional.of(convertToPosition(input));
+
+      } catch (IllegalArgumentException e) {
+        System.out.println(e.getMessage());
+      }
+    }
+  }
+
+  private int solicitForNumberOfSeats(String input) {
     while (true) {
       try {
         return parse(input);
@@ -51,13 +97,23 @@ public class BookSeat implements Action {
     }
   }
 
-  private boolean bookSeats(String input) {
-    int numberOfSeats = getNumberOfSeats(input);
-    return bookSeats(numberOfSeats);
+  private void releaseSeats(String bookingId) {
+    Arrays.stream(cinema.getSeats())
+        .flatMap(Arrays::stream)
+        .filter(seat -> bookingId.equals(seat.getBookingId()))
+        .forEach(Seat::release);
   }
 
-  private boolean bookSeats(int numberOfSeats) {
-    return true;
+  private void bookSeats(String bookingId, int numberOfSeats) {
+    Seat[][] seats = cinema.getSeats();
+    Seat[] selectedSeats = SeatSelector.selectSeats(numberOfSeats, seats);
+    Arrays.stream(selectedSeats).forEach(seat -> seat.reserve(bookingId));
+  }
+
+  private void bookSeats(String bookingId, int numberOfSeats, Position position) {
+    Seat[][] seats = cinema.getSeats();
+    Seat[] selectedSeats = SeatSelector.selectSeats(numberOfSeats, seats, position);
+    Arrays.stream(selectedSeats).forEach(seat -> seat.reserve(bookingId));
   }
 
   private boolean isReturnToMainMenu(String input) {
@@ -78,7 +134,24 @@ public class BookSeat implements Action {
 
   @Override
   public boolean execute() {
+    String bookingId = BookingIdGenerator.nextId();
+
     String input = prompt();
-    return isReturnToMainMenu(input) || bookSeats(input);
+    if (isReturnToMainMenu(input)) return true;
+
+    int numberOfSeats = solicitForNumberOfSeats(input);
+    bookSeats(bookingId, numberOfSeats);
+    displayBookingSummary(bookingId, numberOfSeats);
+
+    Optional<Position> position = solicitForAcceptanceOrNewPosition();
+    while (position.isPresent()) {
+      releaseSeats(bookingId);
+      bookSeats(bookingId, numberOfSeats, position.get());
+      displayBookingSummary(bookingId, numberOfSeats);
+      position = solicitForAcceptanceOrNewPosition();
+    }
+
+    displayBookingConfirmation(bookingId);
+    return true;
   }
 }
