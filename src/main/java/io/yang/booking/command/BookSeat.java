@@ -11,7 +11,6 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.Scanner;
 
-import static io.yang.printer.ConsolePrinter.printWriter;
 import static org.apache.commons.lang3.StringUtils.isNumeric;
 
 public class BookSeat implements Action {
@@ -86,29 +85,29 @@ public class BookSeat implements Action {
   }
 
   private void displayErrorMessage(String message) {
-    printWriter.println(message);
+    System.out.println(message);
   }
 
   private void displayBookingConfirmation(String bookingId) {
-    printWriter.printf("Booking id: %s confirmed.%n", bookingId);
-    printWriter.println();
+    System.out.printf("Booking id: %s confirmed.%n", bookingId);
+    System.out.println();
   }
 
   private void displayBookingSummary(String bookingId, int numberOfSeats) {
-    printWriter.println();
-    printWriter.println(
+    System.out.println();
+    System.out.println(
         "Successfully reserved " + numberOfSeats + " " + cinema.getMovieTitle() + " tickets.");
-    printWriter.println("Booking id: " + bookingId);
-    printWriter.println("Selected seats:");
-    printWriter.println();
+    System.out.println("Booking id: " + bookingId);
+    System.out.println("Selected seats:");
+    System.out.println();
 
     CinemaVisualizer.visualize(cinema, bookingId);
   }
 
   private Optional<Position> solicitForAcceptanceOrNewPosition() {
     while (true) {
-      printWriter.println();
-      printWriter.println("Enter blank to accept seat selection, or enter new seating position:");
+      System.out.println();
+      System.out.println("Enter blank to accept seat selection, or enter new seating position:");
       String input = scanner.nextLine();
 
       boolean isAcceptance = input.trim().isEmpty();
@@ -118,7 +117,7 @@ public class BookSeat implements Action {
         return Optional.of(convertToPosition(input));
 
       } catch (IllegalArgumentException e) {
-        printWriter.println(e.getMessage());
+        System.out.println(e.getMessage());
       }
     }
   }
@@ -160,8 +159,8 @@ public class BookSeat implements Action {
   }
 
   private String promptForSeats() {
-    printWriter.println();
-    printWriter.println("Enter number of seats to book, or enter blank to go back to main menu:");
+    System.out.println();
+    System.out.println("Enter number of seats to book, or enter blank to go back to main menu:");
     return scanner.nextLine();
   }
 

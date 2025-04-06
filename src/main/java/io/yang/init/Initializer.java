@@ -3,8 +3,6 @@ package io.yang.init;
 
 import java.util.Scanner;
 
-import static io.yang.printer.ConsolePrinter.printWriter;
-
 /**
  * The {@code Initializer} class is a utility class designed to initialize a {@link
  * CinemaConfiguration} object based on user input. This class interacts with the user through the
@@ -45,7 +43,7 @@ public class Initializer {
    * @return The input string entered by the user
    */
   private static String prompt(Scanner scanner) {
-    printWriter.println(PROMPT);
+    System.out.println(PROMPT);
     return scanner.nextLine();
   }
 
@@ -66,7 +64,7 @@ public class Initializer {
         cinemaConfiguration = CinemaConfigurationParser.parse(input);
 
       } catch (IllegalArgumentException e) {
-        printWriter.println(e.getMessage());
+        System.out.println(e.getMessage());
       }
     }
     return cinemaConfiguration;

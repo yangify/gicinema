@@ -5,8 +5,6 @@ import io.yang.cinema.CinemaVisualizer;
 
 import java.util.Scanner;
 
-import static io.yang.printer.ConsolePrinter.printWriter;
-
 public class CheckBooking implements Action {
 
   private final Cinema cinema;
@@ -25,13 +23,13 @@ public class CheckBooking implements Action {
   }
 
   private String solicitForBookingId() {
-    printWriter.println("Enter booking id, or enter blank to go back to main menu:");
+    System.out.println("Enter booking id, or enter blank to go back to main menu:");
     return scanner.nextLine();
   }
 
   private void displayBookingDetails(String bookingId) {
-    printWriter.println("Booking id: " + bookingId);
+    System.out.println("Booking id: " + bookingId);
     CinemaVisualizer.visualize(cinema, bookingId);
-    printWriter.println();
+    System.out.println();
   }
 }
