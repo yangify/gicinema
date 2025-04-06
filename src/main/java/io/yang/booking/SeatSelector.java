@@ -9,13 +9,63 @@ public class SeatSelector {
 
   private SeatSelector() {}
 
-  public static Seat[] selectSeats(int numberOfSeats, Seat[][] seats, Position startPosition) {
+  private static Seat[] selectSeatsFrontToBack(
+      int numberOfSeats, Seat[][] seats, Position startPosition) {
+    List<Seat> selectedSeats = new ArrayList<>();
+
+    int rowNum = startPosition.rowNum + 1;
+
+    while (numberOfSeats > 0 && rowNum < seats.length) {
+      List<Seat> availableRowSeats = selectSeats(numberOfSeats, seats[rowNum]);
+      availableRowSeats.subList(0, Math.min(numberOfSeats, availableRowSeats.size()));
+      selectedSeats.addAll(availableRowSeats);
+      numberOfSeats -= availableRowSeats.size();
+      rowNum++;
+    }
+    return selectedSeats.toArray(new Seat[0]);
+  }
+
+  private static Seat[] selectSeatsBackToFront(
+      int numberOfSeats, Seat[][] seats, Position startPosition) {
+    List<Seat> selectedSeats = new ArrayList<>();
+
+    int rowNum = startPosition.rowNum - 1;
+
+    while (numberOfSeats > 0 && rowNum >= 0) {
+      List<Seat> availableRowSeats = selectSeats(numberOfSeats, seats[rowNum]);
+      availableRowSeats.subList(0, Math.min(numberOfSeats, availableRowSeats.size()));
+      selectedSeats.addAll(availableRowSeats);
+      numberOfSeats -= availableRowSeats.size();
+      rowNum--;
+    }
+    return selectedSeats.toArray(new Seat[0]);
+  }
+
+  private static Seat[] selectSeatsLeftToRight(
+      int numberOfSeats, Seat[][] seats, Position startPosition) {
+    List<Seat> selectedSeats = new ArrayList<>();
+
+    int rowNum = startPosition.rowNum;
+    int colNum = startPosition.colNum - 1;
+
+    Seat[] row = seats[rowNum];
+    while (numberOfSeats > 0 && colNum >= 0) {
+      if (row[colNum].isAvailable()) {
+        selectedSeats.add(row[colNum]);
+        numberOfSeats--;
+      }
+      colNum--;
+    }
+    return selectedSeats.toArray(new Seat[0]);
+  }
+
+  private static Seat[] selectSeatsRightToLeft(
+      int numberOfSeats, Seat[][] seats, Position startPosition) {
     List<Seat> selectedSeats = new ArrayList<>();
 
     int rowNum = startPosition.rowNum;
     int colNum = startPosition.colNum;
 
-    // Fill right of provided row
     Seat[] row = seats[rowNum];
     while (numberOfSeats > 0 && colNum < row.length) {
       if (row[colNum].isAvailable()) {
@@ -24,37 +74,24 @@ public class SeatSelector {
       }
       colNum++;
     }
+    return selectedSeats.toArray(new Seat[0]);
+  }
 
-    // Start filling seats closer to the screen
-    while (numberOfSeats > 0 && rowNum > 0) {
-      rowNum--;
-      List<Seat> availableRowSeats = selectSeats(numberOfSeats, seats[rowNum]);
-      availableRowSeats.subList(0, Math.min(numberOfSeats, availableRowSeats.size()));
-      selectedSeats.addAll(availableRowSeats);
-      numberOfSeats -= availableRowSeats.size();
-    }
+  public static Seat[] selectSeats(int numberOfSeats, Seat[][] seats, Position startPosition) {
+    Seat[] currentRowLeftToRight = selectSeatsLeftToRight(numberOfSeats, seats, startPosition);
+    List<Seat> selectedSeats = new ArrayList<>(List.of(currentRowLeftToRight));
+    numberOfSeats -= currentRowLeftToRight.length;
 
-    // Fill left of provided row
-    rowNum = startPosition.rowNum;
-    colNum = startPosition.colNum - 1;
-    row = seats[rowNum];
-    while (numberOfSeats > 0 && colNum >= 0) {
-      if (row[colNum].isAvailable()) {
-        selectedSeats.add(row[colNum]);
-        numberOfSeats--;
-      }
-      colNum--;
-    }
+    Seat[] currentRowBackToFront = selectSeatsBackToFront(numberOfSeats, seats, startPosition);
+    selectedSeats.addAll(List.of(currentRowBackToFront));
+    numberOfSeats -= currentRowBackToFront.length;
 
-    // Start filling backseats
-    rowNum = startPosition.rowNum + 1;
-    while (numberOfSeats > 0 && rowNum < seats.length) {
-      List<Seat> availableRowSeats = selectSeats(numberOfSeats, seats[rowNum]);
-      availableRowSeats.subList(0, Math.min(numberOfSeats, availableRowSeats.size()));
-      selectedSeats.addAll(availableRowSeats);
-      numberOfSeats -= availableRowSeats.size();
-      rowNum++;
-    }
+    Seat[] currentRowRightToLeft = selectSeatsRightToLeft(numberOfSeats, seats, startPosition);
+    selectedSeats.addAll(List.of(currentRowRightToLeft));
+    numberOfSeats -= currentRowRightToLeft.length;
+
+    Seat[] currentRowFrontToBack = selectSeatsFrontToBack(numberOfSeats, seats, startPosition);
+    selectedSeats.addAll(List.of(currentRowFrontToBack));
 
     return selectedSeats.toArray(new Seat[0]);
   }
