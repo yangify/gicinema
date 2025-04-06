@@ -9,14 +9,14 @@ public class SeatSelector {
 
   private SeatSelector() {}
 
-  // TODO: solve this bug
   public static Seat[] selectSeats(int numberOfSeats, Seat[][] seats, Position startPosition) {
     List<Seat> selectedSeats = new ArrayList<>();
 
     int rowNum = startPosition.rowNum;
     int colNum = startPosition.colNum;
-    Seat[] row = seats[rowNum];
 
+    // Fill right of provided row
+    Seat[] row = seats[rowNum];
     while (numberOfSeats > 0 && colNum < row.length) {
       if (row[colNum].isAvailable()) {
         selectedSeats.add(row[colNum]);
@@ -25,13 +25,35 @@ public class SeatSelector {
       colNum++;
     }
 
-    while (numberOfSeats > 0) {
-      rowNum++;
-      if (rowNum >= seats.length) rowNum = 0;
+    // Start filling seats closer to the screen
+    while (numberOfSeats > 0 && rowNum > 0) {
+      rowNum--;
       List<Seat> availableRowSeats = selectSeats(numberOfSeats, seats[rowNum]);
       availableRowSeats.subList(0, Math.min(numberOfSeats, availableRowSeats.size()));
       selectedSeats.addAll(availableRowSeats);
       numberOfSeats -= availableRowSeats.size();
+    }
+
+    // Fill left of provided row
+    rowNum = startPosition.rowNum;
+    colNum = startPosition.colNum - 1;
+    row = seats[rowNum];
+    while (numberOfSeats > 0 && colNum >= 0) {
+      if (row[colNum].isAvailable()) {
+        selectedSeats.add(row[colNum]);
+        numberOfSeats--;
+      }
+      colNum--;
+    }
+
+    // Start filling backseats
+    rowNum = startPosition.rowNum + 1;
+    while (numberOfSeats > 0 && rowNum < seats.length) {
+      List<Seat> availableRowSeats = selectSeats(numberOfSeats, seats[rowNum]);
+      availableRowSeats.subList(0, Math.min(numberOfSeats, availableRowSeats.size()));
+      selectedSeats.addAll(availableRowSeats);
+      numberOfSeats -= availableRowSeats.size();
+      rowNum++;
     }
 
     return selectedSeats.toArray(new Seat[0]);
