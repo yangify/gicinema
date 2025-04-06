@@ -23,7 +23,7 @@
 
 - When specifying a position for booking, if front rows (seats that are nearer to the screen) are filled, it will fill
   the seat towards the back (seats away from the screen) starting from the specified position. That's assuming users are
-  inclined to seat a close to each other as possible.
+  inclined to seat close to each other as possible.
 
 ### How to build
 
