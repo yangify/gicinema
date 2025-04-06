@@ -1,27 +1,23 @@
 package io.yang.booking.command;
 
 import io.yang.cinema.Cinema;
+import io.yang.init.CinemaConfiguration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Named;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Scanner;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 class BookSeatTest {
 
   private Scanner scanner;
-  private Cinema cinema;
 
   private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
   private final PrintStream originalOut = System.out;
@@ -29,7 +25,6 @@ class BookSeatTest {
   @BeforeEach
   void setUp() {
     scanner = mock(Scanner.class);
-    cinema = mock(Cinema.class);
     System.setOut(new PrintStream(outContent));
   }
 
@@ -40,42 +35,75 @@ class BookSeatTest {
   }
 
   @Test
-  void testExecuteReturnsBackToMainMenuWhenBlankInput() {
+  void testExecute_ReturnsToMainMenu() {
     // Given
-    when(scanner.nextLine()).thenReturn("\n");
-    BookSeat bookSeat = new BookSeat(cinema, scanner);
+    Cinema cinema = mock(Cinema.class);
+    when(scanner.nextLine()).thenReturn("");
 
     // When
-    boolean result = bookSeat.execute();
+    new BookSeat(cinema, scanner).execute();
 
     // Then
-    assertTrue(result, "Expected execute() to return true when the user input is blank");
+    verifyNoMoreInteractions(cinema);
   }
 
-  static Stream<Arguments> invalidInputProvider() {
-    return Stream.of(
-        Arguments.of(
-            Named.of("Text input", "text"), "Number of tickets must be a number greater than 0"),
-        Arguments.of(
-            Named.of("Negative number", "-1"), "Number of tickets must be a number greater than 0"),
-        Arguments.of(Named.of("Zero", "0"), "Number of tickets must be a number greater than 0"),
-        Arguments.of(
-            Named.of("Not enough seats", "101"), "Sorry, there are only 10 seats available"));
-  }
-
-  @ParameterizedTest
-  @MethodSource("invalidInputProvider")
-  void testKeepsPromptingUntilValidResponse(String invalidInput, String expectedMessage) {
+  @Test
+  void testExecute_InvalidNumberOfSeats() {
     // Given
-    when(scanner.nextLine()).thenReturn(invalidInput).thenReturn("1");
-    when(cinema.getAvailableSeatsCount()).thenReturn(10);
+    Cinema cinema = new Cinema(new CinemaConfiguration("Movie", 2, 3));
     BookSeat bookSeat = new BookSeat(cinema, scanner);
+    when(scanner.nextLine())
+        .thenReturn("not-a-number") // will cause isValidNumber to fail
+        .thenReturn("10") // exceed capacity
+        .thenReturn("") // assume done or back to main
+    ;
 
     // When
     bookSeat.execute();
     String output = outContent.toString();
 
     // Then
-    assertTrue(output.contains(expectedMessage));
+    assertTrue(output.contains("Number of tickets must be an integer greater than 0"));
+    assertTrue(output.contains("Sorry, there are only 6 seats available"));
+  }
+
+  @Test
+  void testExecute_ValidNumberOfSeatsWithConfirmAndBook() {
+    // Given
+    Cinema cinema = new Cinema(new CinemaConfiguration("Movie", 2, 3));
+    BookSeat bookSeat = new BookSeat(cinema, scanner);
+    when(scanner.nextLine())
+        .thenReturn("2") // number of seats
+        .thenReturn("A01") // seat label or something similar
+        .thenReturn("") // confirm acceptance
+        .thenReturn("") // exit
+    ;
+
+    // When
+    bookSeat.execute();
+    String output = outContent.toString();
+
+    // Then
+    assertTrue(output.contains("Successfully reserved 2 Movie tickets."));
+    assertTrue(output.matches("(?s).*Booking id: GIC\\w* confirmed.*"));
+  }
+
+  @Test
+  void testExecute_InvalidPosition() {
+    // Given
+    Cinema cinema = new Cinema(new CinemaConfiguration("Movie", 2, 3));
+    BookSeat bookSeat = new BookSeat(cinema, scanner);
+    when(scanner.nextLine())
+            .thenReturn("2") // number of seats
+            .thenReturn("a") // seat label or something similar
+            .thenReturn("") // confirm acceptance
+    ;
+
+    // When
+    bookSeat.execute();
+    String output = outContent.toString();
+
+    // Then
+    assertTrue(output.contains("Input must be 3 characters (letter + 2 digits, e.g. B03)."));
   }
 }
