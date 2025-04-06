@@ -20,7 +20,9 @@ public class Main {
     Cinema cinema = new Cinema(config);
 
     Option[] options =
-        new Option[] {new BookOption(cinema, scanner), new CheckOption(cinema), new ExitOption()};
+        new Option[] {
+          new BookOption(cinema, scanner), new CheckOption(cinema, scanner), new ExitOption()
+        };
     new BookingSession(options, scanner).run();
   }
 
