@@ -139,12 +139,20 @@ public class SeatSelector {
   }
 
   public static class Position {
-    int rowNum;
-    int colNum;
+    private final int rowNum;
+    private final int colNum;
 
     public Position(int rowNum, int colNum) {
       this.rowNum = rowNum;
       this.colNum = colNum;
+    }
+
+    public int getRowNum() {
+      return rowNum;
+    }
+
+    public int getColNum() {
+      return colNum;
     }
   }
 }

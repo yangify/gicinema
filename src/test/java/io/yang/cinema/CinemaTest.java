@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -69,5 +71,25 @@ class CinemaTest {
 
     // Verify updated count
     assertEquals(4, cinema.getAvailableSeatsCount());
+  }
+
+  @Test
+  void testHasEnoughSeats() {
+    assertTrue(cinema.hasEnoughSeats(1));
+    assertFalse(cinema.hasEnoughSeats(10));
+  }
+
+  @Test
+  void testReleaseSeats() {
+    // Given
+    Seat[][] seats = cinema.getSeats();
+    seats[0][0].reserve("booking123");
+
+    // When
+    cinema.releaseSeats("booking123");
+
+    // then
+    assertTrue(seats[0][0].isAvailable());
+    assertNull(seats[0][0].getBookingId());
   }
 }

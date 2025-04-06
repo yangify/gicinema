@@ -5,8 +5,6 @@ import io.yang.booking.option.Option;
 
 import java.util.Scanner;
 
-import static org.apache.commons.lang3.StringUtils.isNumeric;
-
 public class Menu {
 
   private static final String WELCOME_MESSAGE = "Welcome to GIC Cinemas";
@@ -19,7 +17,13 @@ public class Menu {
   }
 
   private boolean isValidSelection(String input) {
-    return isNumeric(input) && Integer.parseInt(input) <= options.length;
+    try {
+      int selection = Integer.parseInt(input);
+      return selection > 0 && selection <= options.length;
+
+    } catch (NumberFormatException e) {
+      return false;
+    }
   }
 
   public void displayOptions() {

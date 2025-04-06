@@ -10,7 +10,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Scanner;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -95,6 +96,7 @@ class MenuTest {
   void testPromptForSelection_numericInvalidInputThenValid() {
     // Arrange
     when(mockScanner.nextLine())
+            .thenReturn("0") // invalid numeric (out of range)
             .thenReturn("3") // invalid numeric (out of range)
             .thenReturn("2"); // valid
     Option[] options = { mockOption1, mockOption2 };

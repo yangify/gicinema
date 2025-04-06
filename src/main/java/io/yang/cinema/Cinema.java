@@ -96,4 +96,27 @@ public class Cinema {
   public int getAvailableSeatsCount() {
     return (int) Arrays.stream(seats).flatMap(Arrays::stream).filter(Seat::isAvailable).count();
   }
+  
+  
+  /**
+   * Checks if the cinema has enough available seats to accommodate a specific number of seats.
+   *
+   * @param numberOfSeats The number of seats requested.
+   * @return {@code true} if there are enough available seats; {@code false} otherwise.
+   */
+  public boolean hasEnoughSeats(int numberOfSeats) {
+    return numberOfSeats <= getAvailableSeatsCount();
+  }
+
+  /**
+   * Releases all seats associated with a specific booking ID, making them available again.
+   *
+   * @param bookingId The ID of the booking whose seats should be released.
+   */
+  public void releaseSeats(String bookingId) {
+    Arrays.stream(seats)
+        .flatMap(Arrays::stream)
+        .filter(seat -> bookingId.equals(seat.getBookingId()))
+        .forEach(Seat::release);
+  }
 }
