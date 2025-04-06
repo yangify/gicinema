@@ -84,14 +84,16 @@ public class BookSeat implements Action {
     return numberOfSeats;
   }
 
+  private void displayErrorMessage(String message) {
+    System.out.println(message);
+  }
+
   private void displayBookingConfirmation(String bookingId) {
-    System.out.println();
-    System.out.printf("Booking id: %s confirmed.", bookingId);
+    System.out.printf("Booking id: %s confirmed.%n", bookingId);
     System.out.println();
   }
 
   private void displayBookingSummary(String bookingId, int numberOfSeats) {
-    System.out.println();
     System.out.println(
         "Successfully reserved " + numberOfSeats + " " + cinema.getMovieTitle() + " tickets.");
     System.out.println("Booking id: " + bookingId);
@@ -119,13 +121,15 @@ public class BookSeat implements Action {
     }
   }
 
-  private int solicitForNumberOfSeats(String input) {
+  private Integer solicitForNumberOfSeats() {
     while (true) {
       try {
+        String input = promptForSeats();
+        if (isReturnToMainMenu(input)) return null;
         return parse(input);
 
       } catch (IllegalArgumentException e) {
-        input = promptWithErrorMessage(e.getMessage());
+        displayErrorMessage(e.getMessage());
       }
     }
   }
@@ -153,25 +157,17 @@ public class BookSeat implements Action {
     return input.trim().isEmpty();
   }
 
-  private String promptWithErrorMessage(String message) {
-    System.out.println();
-    System.out.println(message);
-    return promptForSeats();
-  }
-
   private String promptForSeats() {
-    System.out.println();
     System.out.println("Enter number of seats to book, or enter blank to go back to main menu:");
     return scanner.nextLine();
   }
 
   @Override
   public void execute() {
-    String input = promptForSeats();
-    if (isReturnToMainMenu(input)) return;
-
     String bookingId = BookingIdGenerator.nextId();
-    int numberOfSeats = solicitForNumberOfSeats(input);
+
+    Integer numberOfSeats = solicitForNumberOfSeats();
+    if (numberOfSeats == null) return;
     bookSeats(bookingId, numberOfSeats);
     displayBookingSummary(bookingId, numberOfSeats);
 

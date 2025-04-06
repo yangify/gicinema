@@ -25,7 +25,6 @@ public class Menu {
   }
 
   public void displayOptions() {
-    System.out.println();
     System.out.println(WELCOME_MESSAGE);
 
     for (int i = 0; i < options.length; i++) {
