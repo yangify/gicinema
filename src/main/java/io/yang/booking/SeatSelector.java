@@ -46,24 +46,6 @@ public class SeatSelector {
     List<Seat> selectedSeats = new ArrayList<>();
 
     int rowNum = startPosition.rowNum;
-    int colNum = startPosition.colNum - 1;
-
-    Seat[] row = seats[rowNum];
-    while (numberOfSeats > 0 && colNum >= 0) {
-      if (row[colNum].isAvailable()) {
-        selectedSeats.add(row[colNum]);
-        numberOfSeats--;
-      }
-      colNum--;
-    }
-    return selectedSeats.toArray(new Seat[0]);
-  }
-
-  private static Seat[] selectSeatsRightToLeft(
-      int numberOfSeats, Seat[][] seats, Position startPosition) {
-    List<Seat> selectedSeats = new ArrayList<>();
-
-    int rowNum = startPosition.rowNum;
     int colNum = startPosition.colNum;
 
     Seat[] row = seats[rowNum];
@@ -73,6 +55,24 @@ public class SeatSelector {
         numberOfSeats--;
       }
       colNum++;
+    }
+    return selectedSeats.toArray(new Seat[0]);
+  }
+
+  private static Seat[] selectSeatsRightToLeft(
+      int numberOfSeats, Seat[][] seats, Position startPosition) {
+    List<Seat> selectedSeats = new ArrayList<>();
+
+    int rowNum = startPosition.rowNum;
+    int colNum = startPosition.colNum - 1;
+
+    Seat[] row = seats[rowNum];
+    while (numberOfSeats > 0 && colNum >= 0) {
+      if (row[colNum].isAvailable()) {
+        selectedSeats.add(row[colNum]);
+        numberOfSeats--;
+      }
+      colNum--;
     }
     return selectedSeats.toArray(new Seat[0]);
   }
