@@ -3,6 +3,8 @@ package io.yang.cinema;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
+import static io.yang.printer.ConsolePrinter.printWriter;
+
 public class CinemaVisualizer {
 
   private static final int ROW_MARKER_WIDTH = 2;
@@ -71,17 +73,17 @@ public class CinemaVisualizer {
    */
   public static void visualize(Cinema cinema, String bookingId) {
     int width = calculateTotalWidth(cinema);
-    System.out.println(buildScreenLine(width));
-    System.out.println(DIVIDER.repeat(width));
+    printWriter.println(buildScreenLine(width));
+    printWriter.println(DIVIDER.repeat(width));
 
     Seat[][] allSeats = cinema.getSeats();
     int totalRows = allSeats.length;
     for (int row = 0; row < totalRows; row++) {
       char rowChar = (char) ('A' + totalRows - row - 1);
       String line = padRight(rowChar, ROW_MARKER_WIDTH) + buildSeatLine(allSeats[row], bookingId);
-      System.out.println(line);
+      printWriter.println(line);
     }
-    System.out.println(buildColumnMarkerLine(cinema));
+    printWriter.println(buildColumnMarkerLine(cinema));
   }
 
   /** Visualizes the seating layout without any highlighted booking. */

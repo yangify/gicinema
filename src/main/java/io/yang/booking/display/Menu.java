@@ -5,6 +5,7 @@ import io.yang.booking.option.Option;
 
 import java.util.Scanner;
 
+import static io.yang.printer.ConsolePrinter.printWriter;
 import static org.apache.commons.lang3.StringUtils.isNumeric;
 
 public class Menu {
@@ -25,24 +26,24 @@ public class Menu {
   }
 
   public void displayOptions() {
-    System.out.println(WELCOME_MESSAGE);
+    printWriter.println(WELCOME_MESSAGE);
 
     for (int i = 0; i < options.length; i++) {
-      System.out.println("[" + (i + 1) + "] " + options[i].getMessage());
+      printWriter.println("[" + (i + 1) + "] " + options[i].getMessage());
     }
 
-    System.out.println(PROMPT_MESSAGE);
+    printWriter.println(PROMPT_MESSAGE);
   }
 
   public void displayExitMessage() {
-    System.out.println();
-    System.out.println("Thank you for using GIC Cinemas system, Bye!");
+    printWriter.println();
+    printWriter.println("Thank you for using GIC Cinemas system, Bye!");
   }
 
   public int promptForSelection(Scanner scanner) {
     String input = scanner.nextLine();
     while (!isValidSelection(input)) {
-      System.out.println("Invalid option. Please try again.");
+      printWriter.println("Invalid option. Please try again.");
       input = scanner.nextLine();
     }
 

@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.Scanner;
 
+import static io.yang.printer.ConsolePrinter.printWriter;
 import static org.apache.commons.lang3.StringUtils.isNumeric;
 
 public class BookSeat implements Action {
@@ -46,7 +47,7 @@ public class BookSeat implements Action {
 
     String colStr = input.substring(1);
     if (!isNumeric(colStr)) {
-      throw new IllegalArgumentException("Last two characters must be positive digits (e.g. 03).");
+      throw new IllegalArgumentException("Last two characters must be positive integers (e.g. 03).");
     }
     int column = Integer.parseInt(colStr) - 1;
     if (column < 0) {
@@ -70,7 +71,7 @@ public class BookSeat implements Action {
 
   private int parse(String input) {
     if (!isValidNumber(input)) {
-      String message = "Number of tickets must be a number greater than 0";
+      String message = "Number of tickets must be an integer greater than 0";
       throw new IllegalArgumentException(message);
     }
 
@@ -85,28 +86,29 @@ public class BookSeat implements Action {
   }
 
   private void displayErrorMessage(String message) {
-    System.out.println(message);
+    printWriter.println(message);
   }
 
   private void displayBookingConfirmation(String bookingId) {
-    System.out.printf("Booking id: %s confirmed.%n", bookingId);
-    System.out.println();
+    printWriter.printf("Booking id: %s confirmed.%n", bookingId);
+    printWriter.println();
   }
 
   private void displayBookingSummary(String bookingId, int numberOfSeats) {
-    System.out.println(
+    printWriter.println();
+    printWriter.println(
         "Successfully reserved " + numberOfSeats + " " + cinema.getMovieTitle() + " tickets.");
-    System.out.println("Booking id: " + bookingId);
-    System.out.println("Selected seats:");
-    System.out.println();
+    printWriter.println("Booking id: " + bookingId);
+    printWriter.println("Selected seats:");
+    printWriter.println();
 
     CinemaVisualizer.visualize(cinema, bookingId);
   }
 
   private Optional<Position> solicitForAcceptanceOrNewPosition() {
     while (true) {
-      System.out.println();
-      System.out.println("Enter blank to accept seat selection, or enter new seating position:");
+      printWriter.println();
+      printWriter.println("Enter blank to accept seat selection, or enter new seating position:");
       String input = scanner.nextLine();
 
       boolean isAcceptance = input.trim().isEmpty();
@@ -116,7 +118,7 @@ public class BookSeat implements Action {
         return Optional.of(convertToPosition(input));
 
       } catch (IllegalArgumentException e) {
-        System.out.println(e.getMessage());
+        printWriter.println(e.getMessage());
       }
     }
   }
@@ -158,7 +160,8 @@ public class BookSeat implements Action {
   }
 
   private String promptForSeats() {
-    System.out.println("Enter number of seats to book, or enter blank to go back to main menu:");
+    printWriter.println();
+    printWriter.println("Enter number of seats to book, or enter blank to go back to main menu:");
     return scanner.nextLine();
   }
 
