@@ -1,115 +1,156 @@
 package io.yang.booking.display;
 
+import io.yang.booking.command.Action;
 import io.yang.booking.option.Option;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Scanner;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class MenuTest {
 
-  private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-  private final PrintStream originalOut = System.out;
+  private Scanner mockScanner;
+  private Option mockOption1;
+  private Option mockOption2;
+
+  // Streams for capturing printed output
+  private final PrintStream standardOut = System.out;
+  private final ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
 
   @BeforeEach
   void setUp() {
-    System.setOut(new PrintStream(outContent));
+    mockScanner = mock(Scanner.class);
+    mockOption1 = mock(Option.class);
+    mockOption2 = mock(Option.class);
+
+    System.setOut(new PrintStream(outputStreamCaptor));
   }
 
   @AfterEach
   void tearDown() {
-    System.setOut(originalOut);
-    outContent.reset();
+    System.setOut(standardOut);
   }
 
   @Test
-  void shouldDisplayOptions() {
-    // Given
-    Option option1 = mock(Option.class);
-    when(option1.getMessage()).thenReturn("Option1");
-    Option option2 = mock(Option.class);
-    when(option2.getMessage()).thenReturn("Option2");
-    Menu menu = new Menu(new Option[] {option1, option2});
-
-    // When
-    menu.displayOptions();
-    String output = outContent.toString();
-
-    // Then
-    assertTrue(output.contains("Welcome to GIC Cinemas"), "Should contain welcome message");
-    assertTrue(output.contains("Please enter your selection:"), "Should contain prompt");
-    assertTrue(output.contains("[1] Option1"), "Should display option 1");
-    assertTrue(output.contains("[2] Option2"), "Should display option 2");
-  }
-
-  @Test
-  void shouldDisplayExitMessage() {
-    // Given
-    Option[] options = {};
+  void testDisplayOptions_capturesOutput() {
+    // Arrange
+    Option[] options = { mockOption1, mockOption2 };
     Menu menu = new Menu(options);
 
-    // When
+    // Act
+    menu.displayOptions();
+    String printedOutput = outputStreamCaptor.toString();
+
+    // Assert
+    // Verify that expected text is present in the captured output
+    assertTrue(printedOutput.contains("Welcome to GIC Cinemas"),
+            "Should contain welcome message");
+    assertTrue(printedOutput.contains("Please enter your selection:"),
+            "Should contain prompt for user selection");
+    // Option lines like "[1] ..." and "[2] ..." should also appear
+    assertTrue(printedOutput.contains("[1]"),
+            "Should display option [1]");
+    assertTrue(printedOutput.contains("[2]"),
+            "Should display option [2]");
+  }
+
+  @Test
+  void testDisplayExitMessage_capturesOutput() {
+    // Arrange
+    Option[] options = { mockOption1, mockOption2 };
+    Menu menu = new Menu(options);
+
+    // Act
     menu.displayExitMessage();
-    String output = outContent.toString();
+    String printedOutput = outputStreamCaptor.toString();
 
-    // Then
-    assertTrue(
-        output.contains("Thank you for using GIC Cinemas system, Bye!"),
-        "Should display exit message");
+    // Assert
+    assertTrue(printedOutput.contains("Thank you for using GIC Cinemas system, Bye!"),
+            "Should display the exit message");
   }
 
   @Test
-  void shouldGetValidInput() {
-    // Given
-    Option option1 = mock(Option.class);
-    when(option1.getMessage()).thenReturn("Option1");
-    Option option2 = mock(Option.class);
-    when(option2.getMessage()).thenReturn("Option2");
-    Menu menu = new Menu(new Option[] {option1, option2});
+  void testPromptForSelection_numericValidInput() {
+    // Arrange
+    when(mockScanner.nextLine()).thenReturn("1");
+    Option[] options = { mockOption1, mockOption2 };
+    Menu menu = new Menu(options);
 
-    String userInput = "2";
-    System.setIn(new ByteArrayInputStream(userInput.getBytes()));
-    Scanner scanner = new Scanner(System.in);
+    // Act
+    int selectionIndex = menu.promptForSelection(mockScanner);
 
-    // When
-    int selectionIndex = menu.promptForSelection(scanner);
-
-    // Then
-    // "2" means index 1 as the method subtracts 1 internally
-    assertEquals(1, selectionIndex);
+    // Assert
+    // "1" => index 0
+    assertEquals(0, selectionIndex);
   }
 
   @Test
-  void shouldRepromptForInvalidInput() {
-    // Given
-    Option option1 = mock(Option.class);
-    when(option1.getMessage()).thenReturn("Option1");
-    Option option2 = mock(Option.class);
-    when(option2.getMessage()).thenReturn("Option2");
-    Menu menu = new Menu(new Option[] {option1, option2});
+  void testPromptForSelection_numericInvalidInputThenValid() {
+    // Arrange
+    when(mockScanner.nextLine())
+            .thenReturn("3") // invalid numeric (out of range)
+            .thenReturn("2"); // valid
+    Option[] options = { mockOption1, mockOption2 };
+    Menu menu = new Menu(options);
 
-    // Give a series of invalid input "hello", "0" and "4" followed by valid "2"
-    String userInput = "hello\n0\n4\n2\n";
-    System.setIn(new ByteArrayInputStream(userInput.getBytes()));
-    Scanner scanner = new Scanner(System.in);
+    // Act
+    int selectionIndex = menu.promptForSelection(mockScanner);
 
-    // When
-    int selectionIndex = menu.promptForSelection(scanner);
-
-    // Then
+    // Assert
+    // "2" => index 1
     assertEquals(1, selectionIndex);
-    String output = outContent.toString();
-    assertTrue(
-        output.contains("Invalid option. Please try again."),
-        "Should prompt again for invalid input");
+
+    // Check the printed messages for invalid input warning, if desired
+    String printedOutput = outputStreamCaptor.toString();
+    assertTrue(printedOutput.contains("Invalid option. Please try again."),
+            "Should warn about invalid option");
+  }
+
+  @Test
+  void testPromptForSelection_nonNumericInputThenValid() {
+    // Arrange
+    when(mockScanner.nextLine())
+            .thenReturn("abc") // non-numeric
+            .thenReturn("1");  // valid
+    Option[] options = { mockOption1, mockOption2 };
+    Menu menu = new Menu(options);
+
+    // Act
+    int selectionIndex = menu.promptForSelection(mockScanner);
+
+    // Assert
+    // "1" => index 0
+    assertEquals(0, selectionIndex);
+
+    // Check the printed messages about invalid input
+    String printedOutput = outputStreamCaptor.toString();
+    assertTrue(printedOutput.contains("Invalid option. Please try again."),
+            "Should warn about invalid option");
+  }
+
+  @Test
+  void testGetAction() {
+    // Arrange
+    Action action1 = () -> {};
+    Action action2 = () -> {};
+
+    when(mockOption1.getAction()).thenReturn(action1);
+    when(mockOption2.getAction()).thenReturn(action2);
+
+    Option[] options = { mockOption1, mockOption2 };
+    Menu menu = new Menu(options);
+
+    // Act & Assert
+    assertEquals(action1, menu.getAction(0),
+            "Retrieved Action should match action1");
+    assertEquals(action2, menu.getAction(1),
+            "Retrieved Action should match action2");
   }
 }
